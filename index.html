@@ -28,12 +28,43 @@
     </style>
 </head>
 <body>
-        <div class="container">
-            <h1>Weather Application</h1>
-                <div id="weather-details">
-                   <h2>Weather Details in Canada:</h2>
-                   <p>In Canada, the climate is arctic in the northernmost areas, subarctic in the central areas, and continental in the south, where the main cities are located. The only exception is, in the south-west, the coast of British Columbia (see Vancouver), facing the Pacific, where the climate is oceanic, cool and rainy for most of the year.</p>
-                </div>
+    <div class="container">
+        <h1>Weather Application</h1>
+        <div id="weather-details">
+            <h2>Weather Details in 5 Canadian cities :</h2>
+            <p><strong>Temperature in Toronto:</strong> <span id="toronto"></span></p>
+            <p><strong>Temperature in Scarborough:</strong> <span id="scarborough"></span></p>
+            <p><strong>Temperature in Markham:</strong> <span id="markham"></span></p>
+            <p><strong>Temperature in North York:</strong> <span id="north_york"></span></p>
+            <p><strong>Temperature in Vancouver:</strong> <span id="vancouver"></span></p>
         </div>
+    </div>
+
+    <script>
+        function fetchTemperature(cityId, city, latitude, longitude) {
+            fetch(`https://api.tomorrow.io/v4/timelines?location=${latitude},${longitude}&fields=temperature&units=metric&timesteps=current&apikey=zhhWeWUkULXi2C0Z8qPjNd2y134Auk00`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('City not found or error in fetching data');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const currentTemperature = data.data.timelines[0].intervals[0].values.temperature;
+                    document.getElementById(cityId).textContent = `${currentTemperature}°C`;
+                })
+                .catch(error => {
+                    console.error(`Error fetching weather data for ${city}:`, error);
+                    document.getElementById(cityId).textContent = 'N/A';
+                });
+        }
+
+        // Fetch temperature for each city
+        fetchTemperature('toronto', 'Toronto', 43.65107, -79.347015);
+        fetchTemperature('scarborough', 'Scarborough', 43.776425, -79.231752);
+        fetchTemperature('markham', 'Markham', 43.8561, -79.3370);
+        fetchTemperature('north_york', 'North York', 43.7615, -79.4111);
+        fetchTemperature('vancouver', 'Vancouver', 49.2827, -123.1207);
+    </script>
 </body>
 </html>
